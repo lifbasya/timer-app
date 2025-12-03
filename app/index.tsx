@@ -1,12 +1,20 @@
-import { useEffect, useState } from "react";
 import CircleTimer from "@/components/CircleTimer";
-import { Bookmark, ChevronDown, Play, Pause, X } from "lucide-react-native";
+import {
+  Bookmark,
+  ChevronDown,
+  EllipsisVertical,
+  Pause,
+  Play,
+  StepForward,
+} from "lucide-react-native";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const [seconds, setSeconds] = useState(0);
   const [running, setRunning] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
     let timer: ReturnType<typeof setInterval>;
@@ -31,6 +39,32 @@ export default function Index() {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Overlay agar menu tertutup saat klik luar */}
+      {showMenu && (
+        <TouchableOpacity
+          style={StyleSheet.absoluteFillObject}
+          onPress={() => setShowMenu(false)}
+        />
+      )}
+
+      {/* OPTIONS */}
+      <View style={styles.options}>
+        <TouchableOpacity onPress={() => setShowMenu((prev) => !prev)}>
+          <EllipsisVertical color="#5A585C" size={22} />
+        </TouchableOpacity>
+
+        {/* POPUP MENU */}
+        {showMenu && (
+          <View style={styles.dropdown}>
+            <TouchableOpacity style={styles.dropdownItem}>
+              <Bookmark color="#F65558" size={24} />
+              <Text style={styles.dropdownText}>Saved</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+
+      {/* CONTENT */}
       <View style={styles.content}>
         <View style={styles.title}>
           <Text style={styles.titletext}>Stopwatch</Text>
@@ -41,37 +75,58 @@ export default function Index() {
 
         {/* BUTTONS */}
         {!running && seconds === 0 && (
-          /* PLAY saat awal */
           <TouchableOpacity style={styles.buttonplay} onPress={handleStart}>
             <Play color={"white"} fill="white" />
           </TouchableOpacity>
         )}
 
         {running && (
-          /* PAUSE + CANCEL saat timer berjalan */
           <View style={styles.activebutton}>
-            <TouchableOpacity style={styles.buttoncontainercancel} onPress={handleCancel}>
+            <TouchableOpacity
+              style={styles.buttoncontainercancel}
+              onPress={handleCancel}
+            >
               <Text style={styles.buttoncancel}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.buttoncontainerpause} onPress={handlePause}>
-              <Text style={styles.buttonpause}>Pause</Text>
+            <TouchableOpacity
+              style={styles.buttoncontainerpause}
+              onPress={handlePause}
+            >
+              <Pause fill="#FFDDDE" color="#F65558" size={24} />
             </TouchableOpacity>
-            <View style={{ backgroundColor: "#FFDDDE", padding: 10, borderRadius: 8 }}>
+            <View
+              style={{
+                backgroundColor: "#FFDDDE",
+                padding: 10,
+                borderRadius: 8,
+              }}
+            >
               <Bookmark color="#F65558" />
             </View>
           </View>
         )}
 
         {!running && seconds > 0 && (
-          /* PLAY + CANCEL saat timer berhenti */
           <View style={styles.activebutton}>
-            <TouchableOpacity style={styles.buttoncontainercancel} onPress={handleCancel}>
+            <TouchableOpacity
+              style={styles.buttoncontainercancel}
+              onPress={handleCancel}
+            >
               <Text style={styles.buttoncancel}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.buttoncontainerpause} onPress={handleStart}>
-              <Text style={styles.buttonpause}>continue</Text>
+            <TouchableOpacity
+              style={styles.buttoncontainerpause}
+              onPress={handleStart}
+            >
+              <StepForward fill="#FFDDDE" color="#F65558" size={24} />
             </TouchableOpacity>
-            <View style={{ backgroundColor: "#FFDDDE", padding: 10, borderRadius: 8 }}>
+            <View
+              style={{
+                backgroundColor: "#FFDDDE",
+                padding: 10,
+                borderRadius: 8,
+              }}
+            >
               <Bookmark color="#F65558" />
             </View>
           </View>
@@ -85,11 +140,38 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  options: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginTop: 40,
+    marginRight: 32,
+  },
+  dropdown: {
+    position: "absolute",
+    top: 28,
+    right: 0,
+    backgroundColor: "white",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 6,
+  },
+  dropdownItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  dropdownText: {
+    fontSize: 18,
+  },
   content: {
     flex: 1,
     flexDirection: "column",
     alignItems: "center",
-    marginTop: 104,
+    marginTop: 80,
   },
   title: {
     flexDirection: "row",
@@ -116,20 +198,13 @@ const styles = StyleSheet.create({
     width: 300,
     gap: 6,
   },
-  buttoncontainer: {
-    flexDirection: "row",
-    width: 180,
-    flex: 1,
-    justifyContent: "space-between",
-    gap: 6,
-  },
   buttoncontainercancel: {
     backgroundColor: "#FFDDDE",
     flex: 1,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 8
+    borderRadius: 8,
   },
   buttoncontainerpause: {
     backgroundColor: "#F65558",
@@ -137,14 +212,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 8
+    borderRadius: 8,
   },
   buttoncancel: {
     color: "#F65558",
-    fontSize: 16,
-  },
-  buttonpause: {
-    color: "#FFDDDE",
     fontSize: 16,
   },
 });
