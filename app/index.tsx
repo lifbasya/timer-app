@@ -1,4 +1,5 @@
 import CircleTimer from "@/components/CircleTimer";
+import CountdownTimer from "@/components/CountDown";
 import WorldTime from "@/components/WorldTime";
 import {
   Globe,
@@ -111,11 +112,7 @@ export default function Index() {
         )}
 
         {/* COUNTDOWN UI SEMENTARA */}
-        {mode === "countdown" && (
-          <View style={styles.placeholder}>
-            <Text style={{ fontSize: 24 }}>Countdown UI Here</Text>
-          </View>
-        )}
+        {mode === "countdown" && <CountdownTimer />}
 
         {/* WORLD TIME UI SEMENTARA */}
         {mode === "worldtime" && (
