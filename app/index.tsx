@@ -1,4 +1,5 @@
 import CircleTimer from "@/components/CircleTimer";
+import WorldTime from "@/components/WorldTime";
 import {
   Globe,
   Hourglass,
@@ -118,9 +119,7 @@ export default function Index() {
 
         {/* WORLD TIME UI SEMENTARA */}
         {mode === "worldtime" && (
-          <View style={styles.placeholder}>
-            <Text style={{ fontSize: 24 }}>World Time UI Here</Text>
-          </View>
+          <WorldTime />
         )}
 
         {/* STOPWATCH BUTTONS */}
