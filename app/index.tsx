@@ -10,7 +10,7 @@ import {
   Timer,
 } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SplashScreen from "@/components/SplashScreen";
 
@@ -51,9 +51,47 @@ export default function Index() {
     setSeconds(0);
   };
 
+  // --- MODIFIKASI FUNGSI handleModeChange DI SINI ---
   const handleModeChange = (newMode: TimerMode) => {
-    if (newMode !== mode) {
-      handleCancel();
+    if (newMode === mode) {
+      return; // Jangan lakukan apa-apa jika mode sama
+    }
+
+    // Kondisi agar Pop-up muncul:
+    // 1. Stopwatch sedang berjalan (running: true) ATAU
+    // 2. Stopwatch terhenti, tetapi memiliki waktu yang sudah berjalan (seconds > 0)
+    // 3. Countdown sedang berjalan (running: true)
+    
+    // Periksa apakah ada timer yang aktif atau terhenti dengan nilai
+    const hasActiveOrPausedTimer = (mode === "stopwatch" && (running || seconds > 0)) || 
+                                   (mode === "countdown" && running);
+
+    if (hasActiveOrPausedTimer) {
+      let currentModeName = mode === "stopwatch" ? "Stopwatch" : "Countdown";
+
+      // Tampilkan pop-up peringatan
+      Alert.alert(
+        "Konfirmasi Perpindahan Mode",
+        `Mode ${currentModeName} sedang berjalan atau memiliki sesi yang terhenti. Apakah Anda yakin ingin membatalkan sesi ini dan beralih ke mode ${newMode}?`,
+        [
+          {
+            text: "Tidak",
+            style: "cancel",
+            // Tetap di mode saat ini
+          },
+          {
+            text: "Ya",
+            onPress: () => {
+              // Hentikan dan reset timer yang sedang berjalan/terhenti
+              handleCancel(); 
+              setMode(newMode);
+            },
+          },
+        ]
+      );
+    } else {
+      // Jika tidak ada timer aktif/terhenti (atau mode World Time), langsung pindah
+      handleCancel(); 
       setMode(newMode);
     }
   };
