@@ -5,13 +5,19 @@ import { Pause, Play, StepForward } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-type CountdownProps = {};
+type CountdownProps = {
+  onRunningChange: (isRunning: boolean) => void;
+  onHasValueChange: (hasValue: boolean) => void;
+};
 
 // Warna yang digunakan di Index.tsx
 const activeColor = "#F65558";
 const inactiveColor = "#000000";
 
-export default function Countdown({}: CountdownProps) {
+export default function Countdown({
+  onRunningChange,
+  onHasValueChange,
+}: CountdownProps) {
   // Gunakan custom hook untuk logika countdown
   const {
     seconds,
@@ -36,6 +42,14 @@ export default function Countdown({}: CountdownProps) {
       // Opsional: berikan feedback seperti getar atau suara saat selesai
     }
   }, [isCompleted]);
+
+  useEffect(() => {
+    onRunningChange(running);
+  }, [running]);
+
+  useEffect(() => {
+    onHasValueChange(seconds > 0);
+  }, [seconds]);
 
   // Handle saat TimePicker selesai (ditekan OK)
   const handleTimeSet = (totalSeconds: number) => {

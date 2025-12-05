@@ -1,8 +1,9 @@
 import CircleTimer from "@/components/CircleTimer";
-import CountdownTimer from "@/components/CountDown";
+import Countdown from "@/components/CountDown";
+import SplashScreen from "@/components/SplashScreen";
 import WorldTime from "@/components/WorldTime";
 import {
-  Globe,
+  Clock8,
   Hourglass,
   Pause,
   Play,
@@ -12,7 +13,6 @@ import {
 import { useEffect, useState } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import SplashScreen from "@/components/SplashScreen";
 
 // Tambahkan mode worldtime
 type TimerMode = "stopwatch" | "countdown" | "worldtime";
@@ -21,7 +21,10 @@ export default function Index() {
   const [seconds, setSeconds] = useState(0);
   const [running, setRunning] = useState(false);
   const [mode, setMode] = useState<TimerMode>("stopwatch");
-  const [isLoading, setIsLoading] = useState(true); 
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [isCountdownRunning, setIsCountdownRunning] = useState(false);
+  const [isCountdownHasValue, setIsCountdownHasValue] = useState(false);
 
   useEffect(() => {
     let timer: ReturnType<typeof setInterval>;
@@ -34,11 +37,11 @@ export default function Index() {
   }, [running, mode]);
 
   useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 2000); // Tampilkan selama 2000 ms (2 detik)
-        return () => clearTimeout(timer);
-    }, []);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // Tampilkan selama 2000 ms (2 detik)
+    return () => clearTimeout(timer);
+  }, []);
 
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -61,10 +64,11 @@ export default function Index() {
     // 1. Stopwatch sedang berjalan (running: true) ATAU
     // 2. Stopwatch terhenti, tetapi memiliki waktu yang sudah berjalan (seconds > 0)
     // 3. Countdown sedang berjalan (running: true)
-    
+
     // Periksa apakah ada timer yang aktif atau terhenti dengan nilai
-    const hasActiveOrPausedTimer = (mode === "stopwatch" && (running || seconds > 0)) || 
-                                   (mode === "countdown" && running);
+    const hasActiveOrPausedTimer =
+      (mode === "stopwatch" && (running || seconds > 0)) ||
+      (mode === "countdown" && (isCountdownRunning || isCountdownHasValue));
 
     if (hasActiveOrPausedTimer) {
       let currentModeName = mode === "stopwatch" ? "Stopwatch" : "Countdown";
@@ -83,7 +87,7 @@ export default function Index() {
             text: "Ya",
             onPress: () => {
               // Hentikan dan reset timer yang sedang berjalan/terhenti
-              handleCancel(); 
+              handleCancel();
               setMode(newMode);
             },
           },
@@ -91,7 +95,7 @@ export default function Index() {
       );
     } else {
       // Jika tidak ada timer aktif/terhenti (atau mode World Time), langsung pindah
-      handleCancel(); 
+      handleCancel();
       setMode(newMode);
     }
   };
@@ -100,8 +104,8 @@ export default function Index() {
   const inactiveColor = "#000000";
 
   if (isLoading) {
-        return <SplashScreen />;
-    }
+    return <SplashScreen />;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -145,13 +149,13 @@ export default function Index() {
             style={[styles.menuTab, mode === "worldtime" && styles.activeTab]}
             onPress={() => handleModeChange("worldtime")}
           >
-            <Globe
+            <Clock8
               size={22}
               color={mode === "worldtime" ? activeColor : inactiveColor}
             />
             {mode === "worldtime" && (
               <Text style={[styles.menuText, { color: activeColor }]}>
-                World Time
+                Time
               </Text>
             )}
           </TouchableOpacity>
@@ -163,12 +167,15 @@ export default function Index() {
         )}
 
         {/* COUNTDOWN UI SEMENTARA */}
-        {mode === "countdown" && <CountdownTimer />}
+        {mode === "countdown" && (
+          <Countdown
+            onRunningChange={setIsCountdownRunning}
+            onHasValueChange={setIsCountdownHasValue}
+          />
+        )}
 
         {/* WORLD TIME UI SEMENTARA */}
-        {mode === "worldtime" && (
-          <WorldTime />
-        )}
+        {mode === "worldtime" && <WorldTime />}
 
         {/* STOPWATCH BUTTONS */}
         {mode === "stopwatch" && (
