@@ -193,14 +193,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 20,
     width: "100%",
-    padding: 15,
+    padding: 10,
   },
   buttonCancelContainer: {
     backgroundColor: "#FFDDDE",
     alignItems: "center",
     borderRadius: 20,
     width: "100%",
-    padding: 15,
+    padding: 10,
   },
   buttonCancel: {
     color: activeColor,

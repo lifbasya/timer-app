@@ -12,6 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import SplashScreen from "@/components/SplashScreen";
 
 // Tambahkan mode worldtime
 type TimerMode = "stopwatch" | "countdown" | "worldtime";
@@ -20,6 +21,7 @@ export default function Index() {
   const [seconds, setSeconds] = useState(0);
   const [running, setRunning] = useState(false);
   const [mode, setMode] = useState<TimerMode>("stopwatch");
+  const [isLoading, setIsLoading] = useState(true); 
 
   useEffect(() => {
     let timer: ReturnType<typeof setInterval>;
@@ -30,6 +32,13 @@ export default function Index() {
     }
     return () => clearInterval(timer);
   }, [running, mode]);
+
+  useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 2000); // Tampilkan selama 2000 ms (2 detik)
+        return () => clearTimeout(timer);
+    }, []);
 
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -51,6 +60,10 @@ export default function Index() {
 
   const activeColor = "#F65558";
   const inactiveColor = "#000000";
+
+  if (isLoading) {
+        return <SplashScreen />;
+    }
 
   return (
     <SafeAreaView style={styles.container}>
