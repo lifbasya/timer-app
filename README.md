@@ -1,50 +1,102 @@
-# Welcome to your Expo app 👋
+1. Judul Proyek
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+ - Timer+ App
 
-## Get started
+2. Deskripsi Singkat
 
-1. Install dependencies
+*Timer+* adalah aplikasi pengatur waktu yang menghadirkan stopwatch, hitung mundur, dan world clock dalam satu tampilan minimalis. Aplikasi ini dibuat untuk memberikan pengalaman penggunaan yang sederhana dan modern, tanpa kerumitan fitur yang terpisah-pisah. Timer+ membantu pengguna yang membutuhkan alat waktu yang bersih, mudah digunakan, dan efisien—mengatasi masalah aplikasi timer lain yang sering tampak terlalu kompleks dan tidak terintegrasi.
 
-   ```bash
-   npm install
-   ```
+3. Fitur – Fitur
 
-2. Start the app
+Tuliskan fitur utama aplikasi.
+Misal:
 
-   ```bash
-   npx expo start
-   ```
+- Stopwatch
 
-In the output, you'll find options to open the app in a
+- Countdown
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Worldtime
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- SearchCity
 
-## Get a fresh project
 
-When you're ready, run:
+4. Tech Stack / Teknologi yang Digunakan
 
+- ReactNative
+
+- Typescript
+
+- Fetch API 
+
+5. Cara Instal / Cara Menjalankan Proyek
+
+Langkah-langkah agar aplikasi bisa dijalankan di device orang lain.
+Contoh:
+
+git clone <link-repo>
+cd timer-app
+npm install
+npm start
+
+6. Struktur Folder (opsional)
+
+-components
+ \_Coundown.tsx
+  _CircleTimer.tsx
+  _Searchcity.tsx
+  _WorldTime.tsx
+
+7. API Documentation (jika ada backend)
+
+API_KEY = "8ed1536afdc9499c9de11ecf83f4e72f";
+BASE_URL = "https://api.ipgeolocation.io/timezone";
+
+
+8. Author / Pembuat Proyek
+
+Alif -Frontend, -Logic
+
+Farhan -Design UI
+
+muhammad -Frontend, -Logic
+
+9. License (opsional)
+
+# Timer+ App
+
+Seluruh kode, desain, dan aset dalam aplikasi Timer+ merupakan properti pemilik dan boleh disalin, dimodifikasi, atau didistribusikan (Kalau sudah izin sama leader). Pengguna diberikan hak untuk menggunakan aplikasi dan mengubah atau mendistribusikannya.
+
+# Deskripsi singkat aplikasi dan tujuannya.
+
+- Timer+ adalah aplikasi pengatur waktu yang menggabungkan stopwatch, countdown, dan world clock dalam satu tampilan minimalis.
+
+- Ini dibuat Untuk menyediakan alat pengatur waktu yang sederhana, elegan, dan mudah digunakan, tanpa fitur yang membingungkan.
+
+- Timer+ hadir sebagai solusi atas aplikasi timer lain yang sering:
+
+  - Tampilan terlalu kompleks
+
+  - Fitur yang terpencar di banyak menu
+
+  - Tidak intuitif untuk digunakan
+
+## ✨ Fitur
+- Stopwatch
+- Countdown
+- World Clock
+
+## 🛠 Tech Stack
+- ReactNative
+- typescript
+- fetch API
+
+## 🚀 Cara Menjalankan
 ```bash
-npm run reset-project
-```
+git clone <repo>
+cd timer-app
+npm install
+npm run dev
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+👨‍💻 Author
+Nama Muhammad — <https://github.com/MuhammadRpr>
