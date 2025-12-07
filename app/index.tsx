@@ -232,13 +232,13 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     alignItems: "center",
-    marginTop: 80,
+    marginTop: 60,
   },
   header: {
     flexDirection: "row",
     width: "80%",
     justifyContent: "space-between",
-    marginBottom: 80,
+    marginBottom: 60,
   },
   menuTab: {
     flexDirection: "row",
