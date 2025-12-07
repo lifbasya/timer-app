@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { X } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -9,7 +10,7 @@ import {
   View,
 } from "react-native";
 
-const API_KEY = "d38c6d9dd8624b3b9181ac1f5acb8b5e";
+const API_KEY = "fa0a459e91a24b6daa0e650bcf2463ed";
 const BASE_URL = "https://api.ipgeolocation.io/timezone";
 
 export default function WorldTime() {
@@ -19,6 +20,35 @@ export default function WorldTime() {
 
   const [locations, setLocations] = useState<any[]>([]);
   const locationsRef = useRef<any[]>([]);
+
+  useEffect(() => {
+    loadSavedLocations();
+  }, []);
+
+  const loadSavedLocations = async () => {
+    const saved = await AsyncStorage.getItem("worldtime_locations");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      locationsRef.current = parsed;
+      setLocations(parsed);
+    }
+  };
+
+  const saveLocations = async (data: any[]) => {
+    await AsyncStorage.setItem("worldtime_locations", JSON.stringify(data));
+  };
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      const now = new Date();
+      setClock({
+        hour: now.getHours(),
+        minute: now.getMinutes(),
+      });
+    }, 1000);
+
+    return () => clearInterval(t);
+  }, []);
 
   const months = [
     "January",
@@ -34,25 +64,12 @@ export default function WorldTime() {
     "November",
     "December",
   ];
+
   const today = new Date();
   const formattedDate = `${today.getDate()} ${
     months[today.getMonth()]
   } ${today.getFullYear()}`;
 
-  // MAIN CLOCK 24h
-  useEffect(() => {
-    const t = setInterval(() => {
-      const now = new Date();
-      setClock({
-        hour: now.getHours(),
-        minute: now.getMinutes(),
-      });
-    }, 1000);
-
-    return () => clearInterval(t);
-  }, []);
-
-  // SEARCH CITY
   const performSearch = async () => {
     setErrorMsg("");
     if (!query.trim()) return;
@@ -66,52 +83,56 @@ export default function WorldTime() {
       if (!json.time_24) return setErrorMsg("City not found.");
 
       const city = json.geo?.city;
-      if (!city) return setErrorMsg("Please enter a valid city name.");
+      if (!city) return setErrorMsg("Please search using a city name.");
 
       if (
         locationsRef.current.some(
           (l) => l.city.toLowerCase() === city.toLowerCase()
         )
       )
-        return setErrorMsg("This city is already in the list.");
+        return setErrorMsg("This city is already added.");
 
       const newItem = {
         id: `${city}-${Date.now()}`,
         city,
         country: json.geo?.country || "",
-        time: json.time_24.slice(0, 5), // ⬅ remove seconds
+        time: json.time_24.substring(0, 5),
         timezone: json.timezone,
       };
 
       const updated = [...locationsRef.current, newItem];
       locationsRef.current = updated;
       setLocations(updated);
+      saveLocations(updated);
+
       setQuery("");
     } catch {
       setErrorMsg("Network error.");
     }
   };
 
-  // AUTO UPDATE EVERY 5 SEC
   useEffect(() => {
     const t = setInterval(async () => {
       if (!locationsRef.current.length) return;
-
       const updated = await Promise.all(
         locationsRef.current.map(async (loc) => {
           const data = await fetchWorldTime(loc.timezone);
           if (!data) return loc;
-
           const dt = new Date(data.datetime);
-          const hh = dt.getHours().toString().padStart(2, "0");
-          const mm = dt.getMinutes().toString().padStart(2, "0");
 
-          return { ...loc, time: `${hh}:${mm}` }; // ⬅ no seconds
+          return {
+            ...loc,
+            time: `${dt.getHours().toString().padStart(2, "0")}:${dt
+              .getMinutes()
+              .toString()
+              .padStart(2, "0")}`,
+          };
         })
       );
 
       locationsRef.current = updated;
       setLocations(updated);
+      saveLocations(updated);
     }, 5000);
 
     return () => clearInterval(t);
@@ -120,7 +141,6 @@ export default function WorldTime() {
   return (
     <ScrollView style={{ flex: 1, width: "100%" }}>
       <View style={styles.container}>
-        {/* CLOCK */}
         <View style={styles.bigClockRow}>
           <Text style={styles.bigClockHour}>
             {clock.hour.toString().padStart(2, "0")}
@@ -133,7 +153,6 @@ export default function WorldTime() {
 
         <Text style={styles.dateText}>{formattedDate}</Text>
 
-        {/* SEARCH INPUT */}
         <TextInput
           placeholder="Search for a city"
           placeholderTextColor="#999"
@@ -160,6 +179,7 @@ export default function WorldTime() {
                   );
                   locationsRef.current = updated;
                   setLocations(updated);
+                  saveLocations(updated);
                 }}
               >
                 <X size={20} color="#000" />
@@ -167,7 +187,7 @@ export default function WorldTime() {
 
               <Text style={styles.cardTime}>{item.time}</Text>
               <Text style={styles.cardCity}>
-                {item.city}, {item.country}
+                {item.city} • {item.country}
               </Text>
             </View>
           ))}
@@ -199,11 +219,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  dateText: {
-    fontSize: 16,
-    color: "#555",
-    marginBottom: 15,
-  },
+  dateText: { fontSize: 16, color: "#555", marginBottom: 15 },
 
   bigClockRow: { flexDirection: "row", alignItems: "flex-end" },
   bigClockHour: { fontSize: 80, fontWeight: "700" },
@@ -218,19 +234,9 @@ const styles = StyleSheet.create({
     fontSize: 17,
     marginTop: 50,
   },
+  errorMsg: { width: "100%", marginTop: 8, color: "#000", fontSize: 15 },
 
-  errorMsg: {
-    width: "100%",
-    marginTop: 8,
-    color: "#000",
-    fontSize: 15,
-  },
-
-  emptyText: {
-    marginTop: 170,
-    color: "#777",
-    fontSize: 16,
-  },
+  emptyText: { marginTop: 170, color: "#777", fontSize: 16 },
 
   card: {
     width: "100%",
@@ -242,7 +248,6 @@ const styles = StyleSheet.create({
   },
 
   removeBtn: { position: "absolute", right: 10, top: 10 },
-
   cardTime: { fontSize: 32 },
   cardCity: { marginTop: 6, fontSize: 16, color: "#555" },
 });
