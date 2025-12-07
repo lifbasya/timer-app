@@ -4,6 +4,7 @@ import SplashScreen from "@/components/SplashScreen";
 import WorldTime from "@/components/WorldTime";
 import {
   Clock8,
+  Globe,
   Hourglass,
   Pause,
   Play,
@@ -149,13 +150,13 @@ export default function Index() {
             style={[styles.menuTab, mode === "worldtime" && styles.activeTab]}
             onPress={() => handleModeChange("worldtime")}
           >
-            <Clock8
+            <Globe
               size={22}
               color={mode === "worldtime" ? activeColor : inactiveColor}
             />
             {mode === "worldtime" && (
               <Text style={[styles.menuText, { color: activeColor }]}>
-                Time
+                World Time
               </Text>
             )}
           </TouchableOpacity>
